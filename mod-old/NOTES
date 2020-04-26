@@ -1,0 +1,42 @@
+
+Problem test case:
+
+C<exhausted?> here is as in the previous section.  The C<next>
+operation doesn't return anything; it just tells the iterator to
+forget the current value and to get ready to deliver the next value.
+C<value> tells the iterator to return the current value; if we make
+two calls to C<$it-\>('value')> without C<$it-\>('next')> in between,
+we'll get the same value both times.
+
+
+The problem here is that your \> strategy only works once per
+paragraph.  C<$it-\>('value')> is replaced correctly with
+$it->('value').  But the next pass looks for the first close
+bracket and instead of seeing the ones in C<$it-\>('next')> it sees
+the one in $it->('value').  
+
+One idea you had:  Keep track of the current paragraph position, and
+don't transform the same part of the paragraph twice.  This doesn't
+work because of things like X<C<foo>>.  
+
+I think you (again) need to rethink the way transformations are done.
+Here's something I think will work in general:
+
+        1. Some transformations will call mod_escape recursively.
+           For example, X<C<foo>> will expand C<foo> so that it knows
+           what text to insert inline.  Calling transform_X will
+           automatically call transform_C before it returns.  The
+           top-level contol doesn't need to know about this.
+
+        2. Don't expand the same part of the paragraph twice.  If the
+           current tag starts at position s, ends at position p, and
+           expands to something of length n, then expansion should
+           continue from character p-s+n+1.  That is, the character
+           that was immediately after the close bracket.
+
+        3. You'll need a new way to choose which tag to operate on
+           next; choosing the leftmost > won't work because of
+           X<C<foo>>.  Leftmost > here is C<foo> but you want to
+           expand X<...> first.  Choose the leftmost (unescaped) < instead.
+
+

@@ -1,0 +1,52 @@
+This work has been submitted to Morgan Kaufmann Publishers for
+possible publication.  Copyright may be transferred without notice,
+after which this version may no longer be accessible.
+
+----------------------------------------------------------------
+
+This file is copyright 2001 Mark-Jason Dominus.  Unauthorized
+distribution in any medium is absolutely forbidden.  I really mean
+this.  If you distribute this file to anyone else, I will be very,
+very upset.
+
+----------------------------------------------------------------
+
+
+  P E R L   A D V A N C E D   T E C H N I Q U E S   H A N D B O O K
+
+
+
+
+
+
+
+  1. Item number one.  *Bold.*  _Italics._  <Tag.>
+
+  2. Item number two.  *Bold.*  _Italics._  <Tag.>
+
+
+
+Paragraph text. *Bold.* _Italics._ <Tag.>
+
+
+       Program
+    *  Marked line
+       Unmarked line
+    *  Marked line
+    *  Marked line
+       Unmarked line
+       Unmarked line
+    *  Marked line
+    *  Marked line
+    *  Marked line
+       Unmarked line
+       Unmarked line
+       Unmarked line
+       
+       
+         More Program
+         Unmarked line
+         Unmarked line
+         Unmarked line
+
+Paragraph text. *Bold.* _Italics._ <Tag.>

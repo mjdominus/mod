@@ -1,0 +1,22 @@
+#!/usr/bin/perl
+
+use Getopt::Std;
+use Mod::Text;
+getopts('c:') or die "Usage: $0 [-c chapno] files...\n";
+my $guess_chapnos = ! defined ${"opt_c"};
+my $next_chapno = ${"opt_c"} || 1;
+
+my $driver = Mod::Text->new('text')
+  or die "Couldn't create driver for text: $!; aborting.\n";
+
+for my $file (@ARGV) {
+  if ($guess_chapnos && $file =~ /(\d+)\.mod$/) {
+    $driver->setparam('startchapter', $1);
+  } else {
+    $driver->setparam('startchapter', $base_chapno++);
+  }
+
+  $driver->do_file($file);
+}
+
+

@@ -1,0 +1,83 @@
+#!/usr/bin/perl -w
+
+die "Usage: $0 file...\n" unless @ARGV;
+
+use Mod::Text;
+
+for my $file (@ARGV) {
+  local *FH;
+  unless (open FH, "< $file") {
+    warn "Couldn't open < $file: $!; skipping.\n";
+    next;
+  }
+  
+  my $contents;
+  { local $/;
+    $contents = <FH>;
+  }
+
+  $file =~ s/.mod$/.txt/ or $file .= '.html';
+  unless (open FH, "> $file") {
+    warn "Couldn't open > $file: $!; skipping.\n";
+    next;
+  }
+
+  if ($process{init}) {
+    $process{init}->();
+  }
+
+  my @tokens = split /(\n\s*\n)/, $contents;
+  my $last_tok = '';
+ TOKEN:
+  while (@tokens) {
+    my ($toktype);
+    my @args;
+    local $_ = shift @tokens;
+    if (! /\S/) {               # All whitespace
+      $toktype = 'whitespace';
+    } elsif (s/^\=(\w+)//) {
+      $toktype = $1;
+      $toktype =~ tr/A-Z=/a-z/d;
+      @args = split;
+#      print ">> =$toktype directive.\n";
+    } elsif (/^([ \t*].*\n?)+$/) { # Indented paragraph
+      $toktype = 'program';
+    } else {
+      $toktype = 'paragraph';
+    }
+
+    my $code;
+  RESOLVE_CODE:
+    {
+      $code = $process{$toktype} || $process{DEFAULT};
+      redo RESOLVE_CODE unless defined ref $code;
+      unless (defined $code) {
+        warn "Unrecognized code type `$toktype'; using null\n";
+        $code = sub { return $_[1] };
+        last RESOLVE_CODE;
+      }
+    }
+          
+    $LINE += tr/\n//;
+    $CHAR += length;
+
+    my ($output, %option) = $code->($toktype, $_, $last_tok, @args,);
+    $last_tok = $toktype;
+
+    if ($option{Stop}) {
+      last TOKEN;
+    }
+
+    print FH $output if defined $output;
+  }
+}
+
+
+sub warning {
+  my ($msg) = @_;
+  if (lc $msg eq 'diag') { 
+    return; # or $msg = shift;
+  }
+  print STDERR $msg, " near line $LINE (char $CHAR) of input.\n";
+}
+

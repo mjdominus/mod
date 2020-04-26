@@ -1,0 +1,19 @@
+#!/usr/bin/perl
+
+use DB_File;
+
+open BADMATH, "< badmath" 
+    or die "Couldn't open badmath file: $!; aborting";
+tie %m => DB_File, "mathescapes", O_CREAT | O_RDWR, 0666, $DB_BTREE
+    or die "Couldn't bind math translation file: $!; aborting";
+
+while (<BADMATH>) {
+  chomp;
+  next if defined $m{$_};
+  print $_, ": ";
+  my $repl = <STDIN>;
+  chomp $repl;
+  $repl = $_ if $repl eq '';
+  $m{$_} = $repl;
+}
+

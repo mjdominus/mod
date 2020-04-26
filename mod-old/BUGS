@@ -1,0 +1,32 @@
+
+Text:
+
+If you have an unlabeled <...> in a paragraph, following C<...>
+etc. in the paragraph are untranslated.
+
+Missing: 
+=note
+=startpic 
+=endpic
+=pic
+
+Driver:
+
+The following program will be indented wrongly:
+
+        sub foo {
+
+                bar;
+
+        }
+
+because it is three separate paragraphs.
+
+The F<...>-parsing code should be in the driver, not in Text.
+
+
+C<foo\>bar> is being rendered as 'foo\>bar' instead of as 'foo>bar'.
+There is deep confusion concering the paragraph in chap3 that begins
+"Now we can memoize C<date_to_string>."
+
+
