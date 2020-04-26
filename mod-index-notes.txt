@@ -1,0 +1,58 @@
+Index tag (X<>) notes:
+
+Original plan:
+# options: 1 - first mention
+# B - bold  I - italic  C - code  for PAGE NUMBER
+# K<...> alphabetizing key,  
+# T<...> text entry  (e.g, see also)
+# i - include entry verbatim in running text
+# d -definition (enables i, typesets in italics)
+# f - function name  (enables i, typesets in code style)
+# ( start   ) end
+# 
+
+Now it seems like (I)nclude entry in text should be the default.    So let's make the |I option indicate that the entry is (I)nvisible.  
+
+We now have: 
+
+X<foo>   -- typeset foo as it is written, also add foo to the index.
+
+X<C<foo>> -- typeset C<foo>, add C<foo> to index but alphabetized under foo?
+
+X<foo|K<bar>> -- typeset foo, add foo to index alphabetized under bar.
+        Maybe X<C<foo>> should be transformed to X<C<foo>|K<bar>> ?
+        Downside: To actually alphabetize it under `C' you would need
+        to do X<C<foo>|K<C<foo>>> explicitly.  That is not much of a
+        downside!
+
+X<foo|BIC> means that the page number in the index should be
+        bold/italic/codestyle
+
+X<foo|T<see also bar>> means that an entry is put in that has no page
+        number, but is listed under `foo' with a text entry that says
+        `see also bar'.
+
+X<foo|d> means X<I<foo>|I>
+X<foo|f> means X<C<foo>|B>
+X<foo|r> is for references to other books and articles. It means X<I<foo>>>
+
+Uh oh.  There are three important pieces of information we might need:
+        What appears in the verbatim text.
+        What actually appears in the index
+        How the index item is alphabetized.
+
+K<> is for modifying 3 only---not 2.
+
+Assumption: 1==2 in the normal case.  If you don't want 1==2, then you
+        use the |i option.  For example, if you want A,B,C for 1,2,3,
+        you use AI<B|K<C>i>.  So K<> items are always taken exactly
+        literallyno postprocessing.  It does not make sense to
+        interpret escape codes in K<> because K<> is not displayed.
+        Most normal use of K<>: X<+|K<plus sign>>
+
+#listing foo and #beginlisting foo should cause autoinsert of
+        X<foo|B(>; similarly #endlisting foo should cause autoinsert
+        of X<foo|B)>.  Maybe such transformations should be controlled
+        by a preferences file or preferences section in the document.
+
+
